@@ -10,11 +10,11 @@ enum TokenType {
     TOKEN_FUNC,
 };
 
-struct Token
+typedef struct Token
 {
-    enum TokenType type;
-    char* value;    
-};
+    char* value;
+    enum TokenType type;       
+} Token;
 
 bool isLParanthesis(char ch){
     if (ch=='(') return true;
@@ -56,7 +56,7 @@ bool isInteger(char* ch){
     return true;
 }
 
-void lexer(char* input, int* tokenCount, struct Token tokens[]){
+void lexer(char* input, int* tokenCount, Token* tokens){
     int len = strlen(input);
     int left = 0;
     int right = 0;
@@ -65,24 +65,33 @@ void lexer(char* input, int* tokenCount, struct Token tokens[]){
             right++;
         }
         else if (isDelimiter(input[right]) && left==right){
-            if (isOperator(input[right])){
+            char current = input[right];
+            Token tk;
+            tk.value = &current;
+            if (isOperator(current)){
                 printf("'%c' IS AN OPERATOR\n", input[right]);
+                tk.type = TOKEN_OPERATOR;
             }
-            else if (isComment(input[right])){
+            else if (isComment(current)){
                 printf("'%c' IS A COMMENT\n", input[right]);
+                tk.type = TOKEN_COMMENT;
             }
-            else if (isLParanthesis(input[right])){
+            else if (isLParanthesis(current)){
                 printf("'%c' IS A LPARANTHESIS\n", input[right]);
+                tk.type = TOKEN_LP;
             }
-            else if (isRParanthesis(input[right])){
+            else if (isRParanthesis(current)){
                 printf("'%c' IS A RPARANTHESIS\n", input[right]);
+                tk.type = TOKEN_RP;                
             }
+            *(tokens + *tokenCount) = tk;
+            (*tokenCount)++;
             right++;
             left = right;
         }
-        else if (isDelimiter(input[right]) && left != right || (right == len && left != right)){
+        else if (isDelimiter(input[right]) && left != right){
             // Get the substring between two indices
-            char substr[right-left+1];
+            char substr[right-left+1]; //TODO: Check if changing to dynamic memory better
             for (int i = left; i < right; i++)
             {
                 substr[i-left] = input[i];
@@ -91,14 +100,23 @@ void lexer(char* input, int* tokenCount, struct Token tokens[]){
 
             if (isFunction(substr)){
                 printf("'%s' IS A FUNCTION\n", substr);
+                Token tk = {substr, TOKEN_FUNC};
+                *(tokens + *tokenCount) = tk;
+                (*tokenCount)++;
             }
             else if (isInteger(substr))
             {
                 printf("'%s' IS AN INTEGER\n", substr);
+                Token tk = {substr, TOKEN_INT};
+                *(tokens + *tokenCount) = tk;
+                (*tokenCount)++;
             }
             else if (isVariable(substr))
             {
                 printf("'%s' IS A VARIABLE\n", substr);
+                Token tk = {substr, TOKEN_VARIABLE};
+                *(tokens + *tokenCount) = tk;
+                (*tokenCount)++;
             }
             else {
                 printf("%s is invalid character\n", substr);
