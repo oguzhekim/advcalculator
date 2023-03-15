@@ -12,7 +12,7 @@ enum TokenType {
 
 typedef struct Token
 {
-    char* value;
+    char *value;
     enum TokenType type;       
 } Token;
 
@@ -66,8 +66,15 @@ void lexer(char* input, int* tokenCount, Token* tokens){
         }
         else if (isDelimiter(input[right]) && left==right){
             char current = input[right];
+            if (current==' '){
+                right++;
+                left = right;
+                continue;
+            }
             Token tk;
-            tk.value = &current;
+            tk.value = malloc(2);
+            tk.value[0] = input[right];
+            tk.value[1] = '\0';
             if (isOperator(current)){
                 printf("'%c' IS AN OPERATOR\n", input[right]);
                 tk.type = TOKEN_OPERATOR;
@@ -100,21 +107,30 @@ void lexer(char* input, int* tokenCount, Token* tokens){
 
             if (isFunction(substr)){
                 printf("'%s' IS A FUNCTION\n", substr);
-                Token tk = {substr, TOKEN_FUNC};
+                Token tk;
+                tk.value = malloc(strlen(substr)+1);
+                strcpy(tk.value, substr);
+                tk.type = TOKEN_FUNC;
                 *(tokens + *tokenCount) = tk;
                 (*tokenCount)++;
             }
             else if (isInteger(substr))
             {
                 printf("'%s' IS AN INTEGER\n", substr);
-                Token tk = {substr, TOKEN_INT};
+                Token tk;
+                tk.value = malloc(strlen(substr)+1);
+                strcpy(tk.value, substr);
+                tk.type = TOKEN_INT;
                 *(tokens + *tokenCount) = tk;
                 (*tokenCount)++;
             }
             else if (isVariable(substr))
             {
                 printf("'%s' IS A VARIABLE\n", substr);
-                Token tk = {substr, TOKEN_VARIABLE};
+                Token tk;
+                tk.value = malloc(strlen(substr)+1);
+                strcpy(tk.value, substr);
+                tk.type = TOKEN_VARIABLE;
                 *(tokens + *tokenCount) = tk;
                 (*tokenCount)++;
             }
