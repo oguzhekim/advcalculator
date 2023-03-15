@@ -39,8 +39,21 @@ bool isFunction(char* ch){
     return false;
 }
 bool isDelimiter(char ch){
-    if (isRParanthesis(ch) || isLParanthesis(ch) || isOperator(ch)  || isComment(ch)  || ch==' ') return true;
+    if (isRParanthesis(ch) || isLParanthesis(ch) || isOperator(ch)  || isComment(ch)  || ch==' ' || ch=='\0') return true;
     return false;
+}
+bool isVariable(char* ch){
+    for (int i=0; i<strlen(ch);i++){
+        if (isalpha(*ch+i)==0) return false;
+    }
+    return true;
+}
+
+bool isInteger(char* ch){
+    for (int i=0; i<strlen(ch);i++){
+        if (isdigit(*ch+i)==0) return false;
+    }
+    return true;
 }
 
 void lexer(char* input, int* tokenCount, struct Token tokens[]){
@@ -56,19 +69,41 @@ void lexer(char* input, int* tokenCount, struct Token tokens[]){
                 printf("'%c' IS AN OPERATOR\n", input[right]);
             }
             else if (isComment(input[right])){
-                printf("'%c' IS AN COMMENT\n", input[right]);
+                printf("'%c' IS A COMMENT\n", input[right]);
             }
             else if (isLParanthesis(input[right])){
-                printf("'%c' IS AN LPARANTHESIS\n", input[right]);
+                printf("'%c' IS A LPARANTHESIS\n", input[right]);
             }
             else if (isRParanthesis(input[right])){
-                printf("'%c' IS AN RPARANTHESIS\n", input[right]);
+                printf("'%c' IS A RPARANTHESIS\n", input[right]);
             }
             right++;
             left = right;
         }
         else if (isDelimiter(input[right]) && left != right || (right == len && left != right)){
-            char* subStr = subString(str, left, right - 1);
+            // Get the substring between two indices
+            char substr[right-left+1];
+            for (int i = left; i < right; i++)
+            {
+                substr[i-left] = input[i];
+            }
+            substr[right-left] = '\0';
+
+            if (isFunction(substr)){
+                printf("'%s' IS A FUNCTION\n", substr);
+            }
+            else if (isInteger(substr))
+            {
+                printf("'%s' IS AN INTEGER\n", substr);
+            }
+            else if (isVariable(substr))
+            {
+                printf("'%s' IS A VARIABLE\n", substr);
+            }
+            else {
+                printf("%s is invalid character\n", substr);
+            }
+            left = right;
         }
     }
 }
