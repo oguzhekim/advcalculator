@@ -44,14 +44,14 @@ bool isDelimiter(char ch){
 }
 bool isVariable(char* ch){
     for (int i=0; i<strlen(ch);i++){
-        if (isalpha(*ch+i)==0) return false;
+        if (isalpha(*(ch+i))==0) return false;
     }
     return true;
 }
 
 bool isInteger(char* ch){
     for (int i=0; i<strlen(ch);i++){
-        if (isdigit(*ch+i)==0) return false;
+        if (isdigit(*(ch+i))==0) return false;
     }
     return true;
 }
