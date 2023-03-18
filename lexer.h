@@ -2,7 +2,12 @@
 // Available types of token
 enum TokenType {
     TOKEN_INT,
-    TOKEN_OPERATOR,
+    TOKEN_MUL,
+    TOKEN_DIV,
+    TOKEN_ADD,
+    TOKEN_SUBS,
+    TOKEN_AND,
+    TOKEN_OR,
     TOKEN_COMMENT,
     TOKEN_VARIABLE,
     TOKEN_LP, // Left paranthesis
@@ -26,7 +31,7 @@ bool isRParanthesis(char ch){
 }
 
 bool isOperator(char ch){
-    if (ch=='+' || ch=='-' || ch=='*' || ch=='=' || ch=='&' || ch=='|') return true;
+    if (ch=='+' || ch=='-' || ch=='*' || ch=='/' || ch=='=' || ch=='&' || ch=='|') return true;
     return false;
 }
 
@@ -76,8 +81,34 @@ void lexer(char* input, int* tokenCount, Token* tokens){
             tk.value[0] = input[right];
             tk.value[1] = '\0';
             if (isOperator(current)){
-                printf("'%c' IS AN OPERATOR\n", input[right]);
-                tk.type = TOKEN_OPERATOR;
+                switch (current)
+                {
+                case '+':
+                    printf("'%c' IS A ADDITION\n", input[right]);
+                    tk.type = TOKEN_ADD;
+                    break;
+                case '-':
+                    printf("'%c' IS A SUBSTRACTION\n", input[right]);
+                    tk.type = TOKEN_SUBS;
+                    break;
+                case '*':
+                    printf("'%c' IS A MULTIPLICATION\n", input[right]);
+                    tk.type = TOKEN_MUL;
+                    break;
+                case '/':
+                    printf("'%c' IS A DIVISION\n", input[right]);
+                    tk.type = TOKEN_DIV;
+                    break;
+                case '&':
+                    printf("'%c' IS AND\n", input[right]);
+                    tk.type = TOKEN_AND;
+                    break;
+                case '|':
+                    printf("'%c' IS OR\n", input[right]);
+                    tk.type = TOKEN_OR;
+                    break;
+                
+                }
             }
             else if (isComment(current)){
                 printf("'%c' IS A COMMENT\n", input[right]);
