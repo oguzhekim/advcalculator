@@ -25,9 +25,38 @@ Node* parseFactor(Token **pt){ //modify global pointer to tokens array in main f
     }
 }
 
+Node* parseTermTail(Token **pt){
+    //<termtail> => <term> | E
+    Node* node = parseFactor(pt);
+    Token tk = **pt;
+    if (tk.type==1 || tk.type==2){
+        Node* newNode = createNode(tk);
+        (*pt)++;
+        newNode -> left = node;
+        newNode -> right = parseFactor(pt);
+        return newNode;
+    }
+    return node;
+}
+
 Node* parseTerm(Token **pt){
     //<term> => <factor> * <term> | <factor> / <term> | <factor>
     //<term> => <factor> * <factor> | <factor> / <factor> | <factor>   this is what i do rn.
+    //<term> => <factor> * <termtail> | <factor> / <termtail> | <factor>  remove recursion
+    Node* node = parseFactor(pt);
+    Token tk = **pt;
+    if (tk.type==1 || tk.type==2){
+        Node* newNode = createNode(tk);
+        (*pt)++;
+        newNode -> left = node;
+        newNode -> right = parseFactor(pt);
+        return newNode;
+    }
+    return node;
+}
+
+Node* parseExprTail(Token **pt){
+    //<exprtail> => <expr> | E
     Node* node = parseFactor(pt);
     Token tk = **pt;
     if (tk.type==1 || tk.type==2){
@@ -43,13 +72,15 @@ Node* parseTerm(Token **pt){
 Node* parseExpr(Token **pt){
     //<expr> => <term> + <expr> | <term> - <expr> | <term>
     //<expr> => <term> + <term> | <term> - <term> | <term>  this is what i do rn.
+    //<expr> => <term> + <exprtail> | <term> - <exprtail> | <term>  remove recursion.
+
     Node* node = parseTerm(pt);
     Token tk = **pt;
     if (tk.type==3 || tk.type==4){  
         Node* newNode = createNode(tk);
         (*pt)++;
         newNode -> left = node;
-        newNode -> right = parseTerm(pt);
+        newNode -> right = parseExprTail(pt);
         return newNode;
     }
     return node;
