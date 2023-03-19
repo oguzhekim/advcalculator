@@ -13,6 +13,7 @@ enum TokenType {
     TOKEN_LP, // Left paranthesis
     TOKEN_RP, // Right paranthesis
     TOKEN_FUNC,
+    TOKEN_COMMA,
 };
 
 typedef struct Token
@@ -47,7 +48,7 @@ bool isFunction(char* ch){
 }
 
 bool isDelimiter(char ch){
-    if (isRParanthesis(ch) || isLParanthesis(ch) || isOp(ch)  || isComment(ch)  || ch==' ' || ch=='\0') return true;
+    if (isRParanthesis(ch) || isLParanthesis(ch) || isOp(ch)  || isComment(ch)  || ch==' ' || ch=='\0' || ch==',') return true;
     return false;
 }
 
@@ -86,7 +87,7 @@ void lexer(char* input, int* tokenCount, Token* tokens){
             tk.value[1] = '\0';
             if (isOp(current)){
                 switch (current)
-                {
+                {                
                 case '+':
                     printf("'%c' IS A ADDITION\n", input[right]);
                     tk.type = TOKEN_ADD;
@@ -113,6 +114,10 @@ void lexer(char* input, int* tokenCount, Token* tokens){
                     break;
                 
                 }
+            }
+            else if (current == ','){
+                printf("'%c' IS A COMMA\n", input[right]);
+                tk.type = TOKEN_COMMA;
             }
             else if (isComment(current)){
                 printf("'%c' IS A COMMENT\n", input[right]);

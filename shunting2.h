@@ -54,6 +54,7 @@ int getPrecedence(Token tk){
     int type = tk.type;
     if (type==TOKEN_ADD || type==TOKEN_SUBS) return 1;
     else if (type==TOKEN_DIV || type==TOKEN_MUL) return 2;
+    else if (type==TOKEN_FUNC) return 3;
     return -1;
 }
 
@@ -66,16 +67,36 @@ int shunting( Token **pt, stackNode **top)
         printf("%s", nextToken.value);
         (*pt)++;
     } 
+    else if (nextToken.type == TOKEN_FUNC) push(pt, top);
     // If the incoming symbol is a left parenthesis, push it on the stack.
     else if (nextToken.type == TOKEN_LP) push(pt, top);
     // If the incoming symbol is a right parenthesis: discard the right parenthesis, pop and print the stack symbols until you see a left parenthesis. 
     // Pop the left parenthesis and discard it.
+    // If there is a function on top pop and print it.
     else if (nextToken.type == TOKEN_RP){
         (*pt)++;
         Token tk = pop(top);
         while (tk.type!=TOKEN_LP){
             printf("%s", tk.value);
             tk = pop(top);
+        }
+        // If function comes next in stack after left paranthesis, pop and print it.
+        if (!isEmpty(*top) && (**top).tk.type == TOKEN_FUNC) {
+            printf("%s", pop(top).value);
+        }
+    }
+    // If token is comma pop until left paranthesis.
+    else if (nextToken.type == TOKEN_COMMA){
+        (*pt)++;
+        Token tk = (**top).tk;
+        while (tk.type!=TOKEN_LP){            
+            tk = pop(top);
+            printf("%s", tk.value);
+            tk = (**top).tk;
+        }
+        // If function comes next in stack after left paranthesis, pop and print it.
+        if ((**top).tk.type == TOKEN_FUNC) {
+            printf("%s", pop(top).value);
         }
     }
     // If the incoming symbol is an operator and the stack is empty or contains a left parenthesis on top, push the incoming operator onto the stack.
