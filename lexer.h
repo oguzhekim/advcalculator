@@ -25,12 +25,13 @@ bool isLParanthesis(char ch){
     if (ch=='(') return true;
     return false;
 }
+
 bool isRParanthesis(char ch){
     if (ch==')') return true;
     return false;
 }
 
-bool isOperator(char ch){
+bool isOp(char ch){
     if (ch=='+' || ch=='-' || ch=='*' || ch=='/' || ch=='=' || ch=='&' || ch=='|') return true;
     return false;
 }
@@ -39,14 +40,17 @@ bool isComment(char ch){
     if (ch=='%') return true;
     return false;
 }
+
 bool isFunction(char* ch){
     if (strcmp(ch, "xor")==0 || strcmp(ch, "ls")==0 || strcmp(ch, "rs")==0 || strcmp(ch, "lr")==0 || strcmp(ch, "rr")==0 || strcmp(ch, "not")==0) return true;
     return false;
 }
+
 bool isDelimiter(char ch){
-    if (isRParanthesis(ch) || isLParanthesis(ch) || isOperator(ch)  || isComment(ch)  || ch==' ' || ch=='\0') return true;
+    if (isRParanthesis(ch) || isLParanthesis(ch) || isOp(ch)  || isComment(ch)  || ch==' ' || ch=='\0') return true;
     return false;
 }
+
 bool isVariable(char* ch){
     for (int i=0; i<strlen(ch);i++){
         if (isalpha(*(ch+i))==0) return false;
@@ -80,7 +84,7 @@ void lexer(char* input, int* tokenCount, Token* tokens){
             tk.value = malloc(2);
             tk.value[0] = input[right];
             tk.value[1] = '\0';
-            if (isOperator(current)){
+            if (isOp(current)){
                 switch (current)
                 {
                 case '+':
