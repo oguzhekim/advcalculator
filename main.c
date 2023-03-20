@@ -3,9 +3,12 @@
 #include <stdbool.h>
 #include <string.h>
 #include <ctype.h>
+#include <math.h>
+#include <limits.h>
 #include "lexer.h"
 //#include "shuntingyard.h"
 #include "shunting2.h"
+#include "calculator.h"
 
 int main(int argc, char const *argv[])
 {        
@@ -13,18 +16,30 @@ int main(int argc, char const *argv[])
     printf("> ");
     while (fgets(line, sizeof(line), stdin)) {
         if (line==NULL) break;
-        int tokenCount = 0;
-        Token *tokens = malloc(sizeof(Token)*256);
+        int tokenCount1 = 0;
+        int tokenCount2 = 0;
+        Token *infixTokens = malloc(sizeof(Token)*256);
+        Token *postfixTokens = malloc(sizeof(Token)*256);
         line[strcspn(line, "\n")] = 0;
-        lexer(line, &tokenCount, tokens);
+        lexer(line, &tokenCount1, infixTokens);
         stackNode* top = NULL;
-        for (int i = 0; i < tokenCount-1; i++)
+        for (int i = 0; i < tokenCount1-1; i++)
         {   
-            shunting(&tokens, &top);
+            shunting(&infixTokens, &top, postfixTokens, &tokenCount2);
         }
         while (!isEmpty(top)){
-            printf("%s", pop(&top));
+            Token tk = pop(&top);
+            *(postfixTokens+tokenCount2) = tk;
+            tokenCount2++;
+            printf("%s", tk);
         }
+        printf("\n");
+        for (int i = 0; i < tokenCount2; i++)
+        {   
+            printf("%s", *(postfixTokens+i));
+        }
+        printf("\n");
+        printf("%d", eval(tokenCount2, postfixTokens));
         printf("> ");
     }
     

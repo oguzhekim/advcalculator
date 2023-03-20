@@ -18,13 +18,13 @@ stackNode *newstackNode(Token tk)
     return node;
 }
 
-void push(Token **pt, stackNode **top)
+void push(Token tk, stackNode **top)
 {
-    stackNode *node = newstackNode(**pt);
+    stackNode *node = newstackNode(tk);
     node->next = *top;
     *top = node;
     //printf("%s pushed to stack\n", (**pt).value);
-    (*pt)++;
+    //(*pt)++;
 }
 
 Token pop(stackNode **top)
@@ -58,58 +58,87 @@ int getPrecedence(Token tk){
     return -1;
 }
 
-
-int shunting( Token **pt, stackNode **top)
+int shunting(Token **infix, stackNode **top, Token *postfix, int *tokenCount)
 {
-    Token nextToken = **pt;
+    Token nextToken = **infix;
     // If the incoming symbols is an operand, print it..
     if (isOperand(nextToken)){
         printf("%s", nextToken.value);
-        (*pt)++;
+        *(postfix+*tokenCount) = nextToken;
+        (*tokenCount)++;
+        (*infix)++;
+    }
+    else if (nextToken.type == TOKEN_FUNC){
+        push(**infix, top);
+        (*infix)++;
     } 
-    else if (nextToken.type == TOKEN_FUNC) push(pt, top);
     // If the incoming symbol is a left parenthesis, push it on the stack.
-    else if (nextToken.type == TOKEN_LP) push(pt, top);
+    else if (nextToken.type == TOKEN_LP) {
+        push(**infix, top);
+        (*infix)++;
+    }
     // If the incoming symbol is a right parenthesis: discard the right parenthesis, pop and print the stack symbols until you see a left parenthesis. 
     // Pop the left parenthesis and discard it.
     // If there is a function on top pop and print it.
     else if (nextToken.type == TOKEN_RP){
-        (*pt)++;
+        (*infix)++;
         Token tk = pop(top);
         while (tk.type!=TOKEN_LP){
             printf("%s", tk.value);
+            *(postfix+*tokenCount) = tk;
+            (*tokenCount)++;
             tk = pop(top);
         }
         // If function comes next in stack after left paranthesis, pop and print it.
         if (!isEmpty(*top) && (**top).tk.type == TOKEN_FUNC) {
-            printf("%s", pop(top).value);
+            Token tk = pop(top);
+            printf("%s", tk.value);
+            *(postfix+*tokenCount) = tk;
+            (*tokenCount)++;
         }
     }
-    // If token is comma pop until left paranthesis.
+    // If token is comma, pop until left paranthesis.
     else if (nextToken.type == TOKEN_COMMA){
-        (*pt)++;
+        (*infix)++;
         Token tk = (**top).tk;
         while (tk.type!=TOKEN_LP){            
             tk = pop(top);
             printf("%s", tk.value);
+            *(postfix+*tokenCount) = tk;
+            (*tokenCount)++;
             tk = (**top).tk;
         }
         // If function comes next in stack after left paranthesis, pop and print it.
         if ((**top).tk.type == TOKEN_FUNC) {
-            printf("%s", pop(top).value);
+            Token tk = pop(top);
+            printf("%s", tk.value);
+            *(postfix+*tokenCount) = tk;
+            (*tokenCount)++;
         }
     }
     // If the incoming symbol is an operator and the stack is empty or contains a left parenthesis on top, push the incoming operator onto the stack.
-    else if (isOperator(nextToken) && (isEmpty(*top) || (**top).tk.type == TOKEN_LP)) push(pt, top);
+    else if (isOperator(nextToken) && (isEmpty(*top) || (**top).tk.type == TOKEN_LP)) {
+        push(**infix, top);
+        (*infix)++;
+    }
     // If the incoming symbol is an operator and has either higher precedence than the operator on the top of the stack, 
     // or has the same precedence as the operator on the top of the stack and is right associative -- push it on the stack.
-    else if (isOperator(nextToken) && (getPrecedence(nextToken)>getPrecedence((**top).tk))) push(pt, top);
+    else if (isOperator(nextToken) && (getPrecedence(nextToken)>getPrecedence((**top).tk))) {
+        push(**infix, top);
+        (*infix)++;
+    }
     // If the incoming symbol is an operator and has either lower precedence than the operator on the top of the stack, 
     // or has the same precedence as the operator on the top of the stack and is left associative -- continue to pop the stack until this is not true. 
     // Then, push the incoming operator.
     else if (isOperator(nextToken) && (getPrecedence(nextToken)<=getPrecedence((**top).tk))){
         int i = getPrecedence(nextToken);
-        while (i<=getPrecedence((**top).tk)) pop(top);
-        push(pt, top);
+        while (!isEmpty(*top) && i<=getPrecedence((**top).tk)){
+            Token tk = pop(top);
+            printf("%s", tk.value);
+            *(postfix+*tokenCount) = tk;
+            (*tokenCount)++;
+        }
+        push(**infix, top);
+        (*infix)++;
     }
 }
