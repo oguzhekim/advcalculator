@@ -14,6 +14,7 @@ enum TokenType {
     TOKEN_RP, // Right paranthesis
     TOKEN_FUNC,
     TOKEN_COMMA,
+    TOKEN_EQUAL
 };
 
 typedef struct Token

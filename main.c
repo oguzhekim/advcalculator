@@ -2,15 +2,20 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-
 #include "token.h"
 #include "lexer.h"
 #include "stack.h"
 #include "shunting.h"
 #include "calculator.h"
+#include "hashtable.h"
 
 int main(int argc, char const *argv[])
-{        
+{
+    
+    char **varList = malloc(sizeof(char)*130); // 130 max variables that is 19 chars long
+    int varCount = 0;
+    int *valueList = malloc(sizeof(int)*130);
+
     char line[257];
     printf("> ");
     while (fgets(line, sizeof(line), stdin)) {
@@ -38,9 +43,8 @@ int main(int argc, char const *argv[])
             printf("%s", *(postfixTokens+i));
         }
         printf("\n");
-        printf("%d", evaluate(tokenCount2, postfixTokens));
+        printf("%d", evaluate(tokenCount2, postfixTokens, varList, &varCount, valueList));
         printf("> ");
-    }
-    
+    }    
     return 0;
 }

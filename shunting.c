@@ -5,7 +5,7 @@
 
 bool isOperator(Token tk){
     int type = tk.type;
-    if (type == TOKEN_ADD || type == TOKEN_MUL || type == TOKEN_DIV || type == TOKEN_SUBS || type == TOKEN_AND || type == TOKEN_OR) return true;
+    if (type == TOKEN_ADD || type == TOKEN_MUL || type == TOKEN_DIV || type == TOKEN_SUBS || type == TOKEN_AND || type == TOKEN_OR || type == TOKEN_EQUAL) return true;
     return false;
 }
 
@@ -17,7 +17,8 @@ bool isOperand(Token tk){
 
 int getPrecedence(Token tk){
     int type = tk.type;
-    if (type==TOKEN_ADD || type==TOKEN_SUBS) return 1;
+    if (type==TOKEN_EQUAL) return 0;
+    else if (type==TOKEN_ADD || type==TOKEN_SUBS) return 1;
     else if (type==TOKEN_DIV || type==TOKEN_MUL) return 2;
     else if (type==TOKEN_FUNC) return 3;
     return -1;
@@ -44,7 +45,6 @@ int shunting(Token **infix, stackNode **top, Token *postfix, int *tokenCount)
     }
     // If the incoming symbol is a right parenthesis: discard the right parenthesis, pop and print the stack symbols until you see a left parenthesis. 
     // Pop the left parenthesis and discard it.
-    // If there is a function on top pop and print it.
     else if (nextToken.type == TOKEN_RP){
         (*infix)++;
         Token tk = pop(top);

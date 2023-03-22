@@ -98,6 +98,10 @@ void lexer(char* input, int* tokenCount, Token* tokens){
                     printf("'%c' IS OR\n", input[right]);
                     tk.type = TOKEN_OR;
                     break;
+                case '=':
+                    printf("'%c' IS EQUAL\n", input[right]);
+                    tk.type = TOKEN_EQUAL;
+                    break;
                 
                 }
             }
