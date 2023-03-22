@@ -12,24 +12,22 @@ stackNode *newstackNode(Token tk)
     return node;
 }
 
-void push(Token tk, stackNode **top)
+stackNode* push(Token tk, stackNode *top)
 {
     stackNode *node = newstackNode(tk);
-    node->next = *top;
-    *top = node;
-    //printf("%s pushed to stack\n", (**pt).value);
-    //(*pt)++;
+    node->next = top;
+    top = node;
+    return top;
 }
 
-Token pop(stackNode **top)
+stackNode* pop(stackNode **top)
 {
     // ADD ISEMPTY
     stackNode *node = *top;
-    *top = (*top)->next;
+    *top = (**top).next;
     Token tk = node->tk;
     free(node);
-    //printf("%s popped from stack\n", tk.value);
-    return tk;
+    return node;
 };
 
 bool isEmpty(struct stackNode *top)

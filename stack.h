@@ -4,8 +4,8 @@ typedef struct stackNode
     struct stackNode *next;
 } stackNode;
 
-void push(Token tk, stackNode **top);
+stackNode* push(Token tk, stackNode *top);
 
-Token pop(stackNode **top);
+stackNode* pop(stackNode **top);
 
 bool isEmpty(struct stackNode *top);

@@ -1,1 +1,1 @@
-void lexer(char* input, int* tokenCount, Token* tokens);
+Token* lexer(char* input, int* tokenCount);

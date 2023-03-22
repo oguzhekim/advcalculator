@@ -15,36 +15,21 @@ int main(int argc, char const *argv[])
     char **varList = malloc(sizeof(char)*130); // 130 max variables that is 19 chars long
     int varCount = 0;
     int *valueList = malloc(sizeof(int)*130);
-
     char line[257];
     printf("> ");
+
     while (fgets(line, sizeof(line), stdin)) {
         if (line==NULL) break;
-        int tokenCount1 = 0;
-        int tokenCount2 = 0;
-        Token *infixTokens = malloc(sizeof(Token)*256);
-        Token *postfixTokens = malloc(sizeof(Token)*256);
+        int tokenCount = 0;  
         line[strcspn(line, "\n")] = 0;
-        lexer(line, &tokenCount1, infixTokens);
-        stackNode* top = NULL;
-        for (int i = 0; i < tokenCount1-1; i++)
-        {   
-            shunting(&infixTokens, &top, postfixTokens, &tokenCount2);
-        }
-        while (!isEmpty(top)){
-            Token tk = pop(&top);
-            *(postfixTokens+tokenCount2) = tk;
-            tokenCount2++;
-            printf("%s", tk);
-        }
-        printf("\n");
-        for (int i = 0; i < tokenCount2; i++)
-        {   
-            printf("%s", *(postfixTokens+i));
-        }
-        printf("\n");
-        printf("%d", evaluate(tokenCount2, postfixTokens, varList, &varCount, valueList));
+        Token *infixTokens = lexer(line, &tokenCount);
+        Token *postfixTokens = shunting(infixTokens, tokenCount);
+        printf("%d", evaluate(tokenCount, postfixTokens, varList, &varCount, valueList));
+        free(infixTokens);
+        free(postfixTokens);
         printf("> ");
-    }    
+    }
+    free(varList);
+    free(valueList);
     return 0;
 }

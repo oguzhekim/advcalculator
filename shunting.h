@@ -1,1 +1,1 @@
-int shunting(Token **infix, stackNode **top, Token *postfix, int *tokenCount);
+Token* shunting(Token *infix, int tokenCount);
