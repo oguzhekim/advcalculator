@@ -5,7 +5,9 @@
         "string.h": "c",
         "stdlib.h": "c",
         "ctype.h": "c",
-        "shunting2.h": "c"
+        "shunting2.h": "c",
+        "token.h": "c",
+        "limits.h": "c"
     },
     "cmake.configureOnOpen": true
 }

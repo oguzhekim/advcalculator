@@ -2,12 +2,11 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <ctype.h>
-#include <math.h>
-#include <limits.h>
+
+#include "token.h"
 #include "lexer.h"
-//#include "shuntingyard.h"
-#include "shunting2.h"
+#include "stack.h"
+#include "shunting.h"
 #include "calculator.h"
 
 int main(int argc, char const *argv[])
@@ -39,7 +38,7 @@ int main(int argc, char const *argv[])
             printf("%s", *(postfixTokens+i));
         }
         printf("\n");
-        printf("%d", eval(tokenCount2, postfixTokens));
+        printf("%d", evaluate(tokenCount2, postfixTokens));
         printf("> ");
     }
     
