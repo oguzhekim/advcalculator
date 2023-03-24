@@ -46,7 +46,7 @@ bool isInteger(char* ch){
     return true;
 }
 
-Token* lexer(char* input, int* tokenCount){
+Token* lexer(char* input, int* tokenCount, bool *error){
     Token *tokens = malloc(sizeof(Token)*256);
     int len = strlen(input);
     int left = 0;
@@ -76,49 +76,49 @@ Token* lexer(char* input, int* tokenCount){
                 switch (current)
                 {                
                 case '+':
-                    printf("'%c' IS A ADDITION\n", input[right]);
+                    //printf("'%c' IS A ADDITION\n", input[right]);
                     tk.type = TOKEN_ADD;
                     break;
                 case '-':
-                    printf("'%c' IS A SUBSTRACTION\n", input[right]);
+                    //printf("'%c' IS A SUBSTRACTION\n", input[right]);
                     tk.type = TOKEN_SUBS;
                     break;
                 case '*':
-                    printf("'%c' IS A MULTIPLICATION\n", input[right]);
+                    //printf("'%c' IS A MULTIPLICATION\n", input[right]);
                     tk.type = TOKEN_MUL;
                     break;
                 case '/':
-                    printf("'%c' IS A DIVISION\n", input[right]);
+                    //printf("'%c' IS A DIVISION\n", input[right]);
                     tk.type = TOKEN_DIV;
                     break;
                 case '&':
-                    printf("'%c' IS AND\n", input[right]);
+                    //printf("'%c' IS AND\n", input[right]);
                     tk.type = TOKEN_AND;
                     break;
                 case '|':
-                    printf("'%c' IS OR\n", input[right]);
+                    //printf("'%c' IS OR\n", input[right]);
                     tk.type = TOKEN_OR;
                     break;
                 case '=':
-                    printf("'%c' IS EQUAL\n", input[right]);
+                    //printf("'%c' IS EQUAL\n", input[right]);
                     tk.type = TOKEN_EQUAL;
                     break;                
                 }
             }
             else if (current == ','){
-                printf("'%c' IS A COMMA\n", input[right]);
+                //printf("'%c' IS A COMMA\n", input[right]);
                 tk.type = TOKEN_COMMA;
             }
             else if (current == '%'){
-                printf("'%c' IS A COMMENT\n", input[right]);
+                //printf("'%c' IS A COMMENT\n", input[right]);
                 tk.type = TOKEN_COMMENT;
             }
             else if (isLParanthesis(current)){
-                printf("'%c' IS A LPARANTHESIS\n", input[right]);
+                //printf("'%c' IS A LPARANTHESIS\n", input[right]);
                 tk.type = TOKEN_LP;
             }
             else if (isRParanthesis(current)){
-                printf("'%c' IS A RPARANTHESIS\n", input[right]);
+                //printf("'%c' IS A RPARANTHESIS\n", input[right]);
                 tk.type = TOKEN_RP;                
             }
             *(tokens + *tokenCount) = tk;
@@ -136,7 +136,7 @@ Token* lexer(char* input, int* tokenCount){
             
 
             if (isFunction(substr)){
-                printf("'%s' IS A FUNCTION\n", substr);
+                //printf("'%s' IS A FUNCTION\n", substr);
                 Token tk;
                 tk.value = malloc(strlen(substr)+1);
                 strcpy(tk.value, substr);
@@ -146,7 +146,7 @@ Token* lexer(char* input, int* tokenCount){
             }
             else if (isInteger(substr))
             {
-                printf("'%s' IS AN INTEGER\n", substr);
+                //printf("'%s' IS AN INTEGER\n", substr);
                 Token tk;
                 tk.value = malloc(strlen(substr)+1);
                 strcpy(tk.value, substr);
@@ -156,7 +156,7 @@ Token* lexer(char* input, int* tokenCount){
             }
             else if (isVariable(substr))
             {
-                printf("'%s' IS A VARIABLE\n", substr);
+                //printf("'%s' IS A VARIABLE\n", substr);
                 Token tk;
                 tk.value = malloc(strlen(substr)+1);
                 strcpy(tk.value, substr);
@@ -165,7 +165,9 @@ Token* lexer(char* input, int* tokenCount){
                 (*tokenCount)++;
             }
             else {
-                printf("%s is invalid character\n", substr);
+                //printf("%s is invalid character\n", substr);
+                *error = true;
+                break;
             }
             free(substr);
             left = right;

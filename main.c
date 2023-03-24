@@ -9,6 +9,7 @@
 #include "shunting.h"
 #include "calculator.h"
 #include "hashtable.h"
+#include "validator.h"
 
 int main(int argc, char const *argv[])
 {
@@ -21,16 +22,21 @@ int main(int argc, char const *argv[])
 
     while (fgets(line, sizeof(line), stdin)) {
         if (line==NULL) break;
+        bool error = false;
         int tokenCount = 0;
         int newTokenCount = 0; // Number of tokens in postfix expression. It might be different than the infix expression because it doesn't contain any paranthesis.
         line[strcspn(line, "\n")] = 0;
-        Token *infixTokens = lexer(line, &tokenCount);
-        // TODO: Handle just variable case.
-        Token *postfixTokens = shunting(infixTokens, tokenCount, &newTokenCount);        
-        int res = evaluate(newTokenCount, postfixTokens, varList, &varCount, valueList);
-        if (res != INT_MIN) printf("%d\n", res);
-        free(infixTokens);
-        free(postfixTokens);
+        Token *infixTokens = lexer(line, &tokenCount, &error);
+        validate(&error, infixTokens, tokenCount);
+        if (!error){
+            // TODO: Handle just variable or integer case.
+            Token *postfixTokens = shunting(infixTokens, tokenCount, &newTokenCount);
+            int res = evaluate(newTokenCount, postfixTokens, varList, &varCount, valueList);
+            if (res != INT_MIN) printf("%d\n", res);            
+            free(postfixTokens);
+        }
+        else printf("Error!\n");
+        free(infixTokens);        
         printf("> ");
     }
     free(varList);

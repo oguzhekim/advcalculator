@@ -9,6 +9,7 @@
 #include "hashtable.h"
 
 int evaluate (int count, Token *postfix, char **varList, int *varCount, int *valueList){
+    if (count==0) return INT_MIN;
     stackNode* top = NULL;
     for (int i = 0; i < count; i++)
     {

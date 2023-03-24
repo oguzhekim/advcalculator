@@ -1,0 +1,1 @@
+void validate(bool *error, Token *infixTokens, int tokenCount);
