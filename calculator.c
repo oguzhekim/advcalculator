@@ -21,7 +21,21 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
         else if (tk.type == TOKEN_FUNC && strcmp(tk.value, "not")==0){
             free(tk.value);
             stackNode* node = pop(&top);
-            int fac = atoi(node->tk.value);
+            int fac;
+            if (node->tk.type == TOKEN_INT){
+                fac = atoi(node->tk.value);
+            }
+            else {
+                int index = search(varList, node->tk.value, *varCount);
+                if (index==-1){
+                    fac = 0;
+                    *(valueList+*varCount) = 0;
+                    addVar(varList, node->tk.value, varCount);
+                }
+                else {
+                    fac = *(valueList+index);
+                }
+            }
             free(node->tk.value);
             free(node);            
             int num = ~fac;
@@ -182,7 +196,22 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
         }
         free(tk.value);
     }
-    int res = atoi((*top).tk.value);
+    Token tk = (*top).tk;
+    int res;
+    if (tk.type == TOKEN_INT){
+        res = atoi(tk.value);
+    }
+    else {
+        int index = search(varList, tk.value, *varCount);
+        if (index==-1){
+            res = 0;
+            *(valueList+*varCount) = 0;
+            addVar(varList, tk.value, varCount);
+        }
+        else {
+            res = *(valueList+index);
+        }
+    }    
     free(top->tk.value);
     free(top);
     return res;

@@ -52,7 +52,7 @@ void validate(bool *error, Token *infixTokens, int tokenCount){
             else if (i!=0){
                 Token prev = *(infixTokens+i-1);
                 // Token before the function can be operator, comma or left paranthesis .
-                if (isOperator(prev) && prev.type != TOKEN_COMMA && prev.type != TOKEN_LP){
+                if (!isOperator(prev) && prev.type != TOKEN_COMMA && prev.type != TOKEN_LP){
                     *error=true;
                     return;
                 }

@@ -29,7 +29,6 @@ int main(int argc, char const *argv[])
         Token *infixTokens = lexer(line, &tokenCount, &error);
         validate(&error, infixTokens, tokenCount);
         if (!error){
-            // TODO: Handle just variable or integer case.
             Token *postfixTokens = shunting(infixTokens, tokenCount, &newTokenCount);
             int res = evaluate(newTokenCount, postfixTokens, varList, &varCount, valueList);
             if (res != INT_MIN) printf("%d\n", res);            
