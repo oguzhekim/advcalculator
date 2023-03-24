@@ -28,13 +28,15 @@ int main(int argc, char const *argv[])
         line[strcspn(line, "\n")] = 0;
         Token *infixTokens = lexer(line, &tokenCount, &error);
         validate(&error, infixTokens, tokenCount);
+        Token *postfixTokens = NULL;
+        if (!error) postfixTokens = shunting(infixTokens, tokenCount, &newTokenCount, &error);
+        // Shunting function can change the state of error.
         if (!error){
-            Token *postfixTokens = shunting(infixTokens, tokenCount, &newTokenCount);
-            int res = evaluate(newTokenCount, postfixTokens, varList, &varCount, valueList);
+            int res = evaluate(newTokenCount, postfixTokens, varList, &varCount, valueList, &error);
             if (res != INT_MIN) printf("%d\n", res);            
-            free(postfixTokens);
         }
-        else printf("Error!\n");
+        if (error) printf("Error!\n");
+        free(postfixTokens);        
         free(infixTokens);        
         printf("> ");
     }

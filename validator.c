@@ -77,5 +77,10 @@ void validate(bool *error, Token *infixTokens, int tokenCount){
                 }
             }
         }
+        // Check for empty paranthesis.
+        else if (type == TOKEN_LP && (infixTokens+i+1)->type == TOKEN_RP){
+            *error=true;
+            return;
+        }
     }
 }

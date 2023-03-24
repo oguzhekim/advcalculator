@@ -8,13 +8,18 @@
 #include "stack.h"
 #include "hashtable.h"
 
-int evaluate (int count, Token *postfix, char **varList, int *varCount, int *valueList){
+int evaluate (int count, Token *postfix, char **varList, int *varCount, int *valueList, bool *error){
     if (count==0) return INT_MIN;
     stackNode* top = NULL;
     for (int i = 0; i < count; i++)
     {
         Token tk = *(postfix+i);
-        if (tk.type == TOKEN_INT || tk.type == TOKEN_VARIABLE){
+        // Unmatched left paranthesis. Postfix expression cannot contain paranthesis.
+        if (tk.type == TOKEN_LP){
+            *error = true;
+            return INT_MIN;
+        }
+        else if (tk.type == TOKEN_INT || tk.type == TOKEN_VARIABLE){
             top = push(tk, top);
             continue;
         }

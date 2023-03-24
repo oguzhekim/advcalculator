@@ -27,7 +27,7 @@ int getPrecedence(Token tk){
     return -1;
 }
 
-Token* shunting(Token *infix, int tokenCount, int *newTokenCount)
+Token* shunting(Token *infix, int tokenCount, int *newTokenCount, bool *error)
 {   
     Token *postfixTokens = malloc(sizeof(Token)*256);
     stackNode* top = NULL;
@@ -48,7 +48,12 @@ Token* shunting(Token *infix, int tokenCount, int *newTokenCount)
         }
         // If the incoming symbol is a right parenthesis: discard the right parenthesis, pop and print the stack symbols until you see a left parenthesis. 
         // Pop the left parenthesis and discard it.
-        else if (currentToken.type == TOKEN_RP){
+        else if (currentToken.type == TOKEN_RP){            
+            // Unmatched right paranthesis.
+            if (isEmpty(top)){
+                *error = true;
+                return postfixTokens;
+            }
             Token tk = pop(&top)->tk;
             while (tk.type!=TOKEN_LP){
                 //printf("%s", tk.value);
