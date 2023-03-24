@@ -65,7 +65,7 @@ Token* lexer(char* input, int* tokenCount){
             else if (current=='%'){
                 return tokens;
             }
-            else if (current==NULL){
+            else if (current=='\0'){
                 return tokens;
             }
             Token tk;
@@ -102,8 +102,7 @@ Token* lexer(char* input, int* tokenCount){
                 case '=':
                     printf("'%c' IS EQUAL\n", input[right]);
                     tk.type = TOKEN_EQUAL;
-                    break;
-                
+                    break;                
                 }
             }
             else if (current == ','){

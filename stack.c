@@ -25,8 +25,8 @@ stackNode* pop(stackNode **top)
     // ADD ISEMPTY
     stackNode *node = *top;
     *top = (**top).next;
-    Token tk = node->tk;
-    free(node);
+    //Token tk = node->tk;
+    //free(node);
     return node;
 };
 

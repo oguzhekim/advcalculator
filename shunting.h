@@ -1,1 +1,1 @@
-Token* shunting(Token *infix, int tokenCount);
+Token* shunting(Token *infix, int tokenCount, int *newTokenCount);

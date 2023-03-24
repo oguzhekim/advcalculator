@@ -27,18 +27,17 @@ int getPrecedence(Token tk){
     return -1;
 }
 
-Token* shunting(Token *infix, int tokenCount)
+Token* shunting(Token *infix, int tokenCount, int *newTokenCount)
 {   
     Token *postfixTokens = malloc(sizeof(Token)*256);
     stackNode* top = NULL;
-    int currentCount = 0;
     for (int i = 0; i < tokenCount; i++){
         Token currentToken = *(infix+i);
         // If the incoming symbols is an operand, print it..
         if (isOperand(currentToken)){
             //printf("%s", currentToken.value);
-            *(postfixTokens+currentCount) = currentToken;
-            currentCount++;
+            *(postfixTokens+(*newTokenCount)) = currentToken;
+            (*newTokenCount)++;
         }
         else if (currentToken.type == TOKEN_FUNC){
             top = push(currentToken, top);
@@ -53,16 +52,16 @@ Token* shunting(Token *infix, int tokenCount)
             Token tk = pop(&top)->tk;
             while (tk.type!=TOKEN_LP){
                 //printf("%s", tk.value);
-                *(postfixTokens+currentCount) = tk;
-                currentCount++;
+                *(postfixTokens+(*newTokenCount)) = tk;
+                (*newTokenCount)++;
                 tk = pop(&top)->tk;
             }
             // If function comes next in stack after left paranthesis, pop and print it.
             if (!isEmpty(top) && (*top).tk.type == TOKEN_FUNC) {
                 tk = pop(&top)->tk;
                 //printf("%s", tk.value);
-                *(postfixTokens+currentCount) = tk;
-                currentCount++;
+                *(postfixTokens+(*newTokenCount)) = tk;
+                (*newTokenCount)++;
             }
         }
         // If token is comma, pop until left paranthesis.
@@ -71,16 +70,16 @@ Token* shunting(Token *infix, int tokenCount)
             while (tk.type!=TOKEN_LP){            
                 tk = pop(&top)->tk;
                 //printf("%s", tk.value);
-                *(postfixTokens+currentCount) = tk;
-                currentCount++;
+                *(postfixTokens+(*newTokenCount)) = tk;
+                (*newTokenCount)++;
                 tk = (*top).tk;
             }
             // If function comes next in stack after left paranthesis, pop and print it.
             if ((*top).tk.type == TOKEN_FUNC) {
                 tk = pop(&top)->tk;
                 //printf("%s", tk.value);
-                *(postfixTokens+currentCount) = tk;
-                currentCount++;
+                *(postfixTokens+(*newTokenCount)) = tk;
+                (*newTokenCount)++;
             }
         }
         // If the incoming symbol is an operator and the stack is empty or contains a left parenthesis on top, push the incoming operator onto the stack.
@@ -100,16 +99,18 @@ Token* shunting(Token *infix, int tokenCount)
             while (!isEmpty(top) && i<=getPrecedence((*top).tk)){
                 Token tk = pop(&top)->tk;
                 //printf("%s", tk.value);
-                *(postfixTokens+currentCount) = tk;
-                currentCount++;
+                *(postfixTokens+(*newTokenCount)) = tk;
+                (*newTokenCount)++;
             }
             top = push(currentToken, top);
         }
     }
     while (!isEmpty(top)){
-        Token tk = pop(&top)->tk;
-        *(postfixTokens+currentCount) = tk;
-        currentCount++;
+        stackNode* node = pop(&top);
+        Token tk = node->tk;
+        free(node);
+        *(postfixTokens+(*newTokenCount)) = tk;
+        (*newTokenCount)++;
         //printf("%s", tk);
     }
     return postfixTokens;
