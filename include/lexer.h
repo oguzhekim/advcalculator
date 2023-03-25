@@ -1,0 +1,1 @@
+Token* lexer(char* input, int* tokenCount, bool *error);
