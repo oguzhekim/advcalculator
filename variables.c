@@ -3,8 +3,6 @@
 #include <string.h>
 #include <stdbool.h>
 
-
-
 void addVar (char **varList, char *var, int *varCount){
     *(varList+*varCount) = var;
     (*varCount)++;

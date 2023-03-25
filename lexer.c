@@ -18,7 +18,7 @@ bool isRParanthesis(char ch){
 }
 
 bool isOp(char ch){
-    if (ch=='+' || ch=='-' || ch=='*' || ch=='/' || ch=='=' || ch=='&' || ch=='|') return true;
+    if (ch=='+' || ch=='-' || ch=='*' || ch=='=' || ch=='&' || ch=='|') return true;
     return false;
 }
 
@@ -51,7 +51,9 @@ Token* lexer(char* input, int* tokenCount, bool *error){
     int len = strlen(input);
     int left = 0;
     int right = 0;
+    // Two pointers to input string is defined as left and right.
     while (right<=len) {
+        // If current character is not a delimiter, right pointer is incremented.
         if (!isDelimiter(input[right])){
             right++;
         }
@@ -76,67 +78,52 @@ Token* lexer(char* input, int* tokenCount, bool *error){
                 switch (current)
                 {                
                 case '+':
-                    //printf("'%c' IS A ADDITION\n", input[right]);
                     tk.type = TOKEN_ADD;
                     break;
                 case '-':
-                    //printf("'%c' IS A SUBSTRACTION\n", input[right]);
-                    tk.type = TOKEN_SUBS;
+                    tk.type = TOKEN_SUB;
                     break;
                 case '*':
-                    //printf("'%c' IS A MULTIPLICATION\n", input[right]);
                     tk.type = TOKEN_MUL;
                     break;
-                case '/':
-                    //printf("'%c' IS A DIVISION\n", input[right]);
-                    tk.type = TOKEN_DIV;
-                    break;
                 case '&':
-                    //printf("'%c' IS AND\n", input[right]);
                     tk.type = TOKEN_AND;
                     break;
                 case '|':
-                    //printf("'%c' IS OR\n", input[right]);
                     tk.type = TOKEN_OR;
                     break;
                 case '=':
-                    //printf("'%c' IS EQUAL\n", input[right]);
                     tk.type = TOKEN_EQUAL;
                     break;                
                 }
             }
             else if (current == ','){
-                //printf("'%c' IS A COMMA\n", input[right]);
                 tk.type = TOKEN_COMMA;
             }
             else if (current == '%'){
-                //printf("'%c' IS A COMMENT\n", input[right]);
                 tk.type = TOKEN_COMMENT;
             }
             else if (isLParanthesis(current)){
-                //printf("'%c' IS A LPARANTHESIS\n", input[right]);
                 tk.type = TOKEN_LP;
             }
             else if (isRParanthesis(current)){
-                //printf("'%c' IS A RPARANTHESIS\n", input[right]);
                 tk.type = TOKEN_RP;                
             }
             *(tokens + *tokenCount) = tk;
             (*tokenCount)++;
             right++;
-            left = right;
+            left++;
         }
+        // If current character is a delimiter and pointers are not equal, that means the string between two pointers must be captured
+        // and used to decide whether the substring is a function, integer or variable.
         else if (isDelimiter(input[right]) && left != right){
             // Get the substring between two indices
-            char *substr = malloc((right-left+1)*sizeof(char)); //TODO: Check if changing to dynamic memory better
+            char *substr = malloc((right-left+1)*sizeof(char));
             for (int i = left; i < right; i++)
-                *(substr+i-left) = input[i];
-            
-            *(substr+right-left) = '\0';
-            
+                *(substr+i-left) = input[i];            
+            *(substr+right-left) = '\0';            
 
             if (isFunction(substr)){
-                //printf("'%s' IS A FUNCTION\n", substr);
                 Token tk;
                 tk.value = malloc(strlen(substr)+1);
                 strcpy(tk.value, substr);
@@ -146,7 +133,6 @@ Token* lexer(char* input, int* tokenCount, bool *error){
             }
             else if (isInteger(substr))
             {
-                //printf("'%s' IS AN INTEGER\n", substr);
                 Token tk;
                 tk.value = malloc(strlen(substr)+1);
                 strcpy(tk.value, substr);
@@ -156,7 +142,6 @@ Token* lexer(char* input, int* tokenCount, bool *error){
             }
             else if (isVariable(substr))
             {
-                //printf("'%s' IS A VARIABLE\n", substr);
                 Token tk;
                 tk.value = malloc(strlen(substr)+1);
                 strcpy(tk.value, substr);
@@ -164,12 +149,13 @@ Token* lexer(char* input, int* tokenCount, bool *error){
                 *(tokens + *tokenCount) = tk;
                 (*tokenCount)++;
             }
+            // Invalid character.
             else {
-                //printf("%s is invalid character\n", substr);
                 *error = true;
                 break;
             }
             free(substr);
+            // After the decision pointers can be set equal.
             left = right;
         }
     }

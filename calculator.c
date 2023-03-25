@@ -6,10 +6,12 @@
 #include <limits.h>
 #include "token.h"
 #include "stack.h"
-#include "hashtable.h"
+#include "variables.h"
 
 int evaluate (int count, Token *postfix, char **varList, int *varCount, int *valueList, bool *error){
     if (count==0) return INT_MIN;
+    // If there is an error issued before exit the function.
+    if (*error) return INT_MIN;
     stackNode* top = NULL;
     for (int i = 0; i < count; i++)
     {
@@ -19,14 +21,17 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
             *error = true;
             return INT_MIN;
         }
+        // Push integers and variables to the stack.
         else if (tk.type == TOKEN_INT || tk.type == TOKEN_VARIABLE){
             top = push(tk, top);
             continue;
         }
+        // If next token is the not function pop one element and evaluate.
         else if (tk.type == TOKEN_FUNC && strcmp(tk.value, "not")==0){
             free(tk.value);
             stackNode* node = pop(&top);
             int fac;
+            // If the popped token is variable get its value.
             if (node->tk.type == TOKEN_INT){
                 fac = atoi(node->tk.value);
             }
@@ -42,7 +47,7 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
                 }
             }
             free(node->tk.value);
-            free(node);            
+            free(node);
             int num = ~fac;
             int length = snprintf( NULL, 0, "%d", num );
             char* str = malloc( length + 1 );
@@ -62,15 +67,18 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
             //free(node1->tk.value);
             free(node1);
             int index = search(varList, var, *varCount);
-            if (index == -1){ //var not defined before
+            // If variable not defined before, add it to varList and update its value.
+            if (index == -1){ 
                 *(valueList+*varCount) = fac;
                 addVar(varList, var, varCount);
             }
+            // If variable defined before update its value.
             else {
                 *(valueList+index) = fac;
             }
             return INT_MIN;
         }
+        // For all other operations pop 2 elements from the stack and get their values if they are variables.
         stackNode* node2 = pop(&top);
         stackNode* node1 = pop(&top);
         Token tk2 = node2->tk;
@@ -117,7 +125,7 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
             Token newtk = {str, TOKEN_INT};
             top = push(newtk, top);
         }
-        else if (tk.type == TOKEN_SUBS){
+        else if (tk.type == TOKEN_SUB){
             int num = fac1-fac2;
             int length = snprintf( NULL, 0, "%d", num );
             char* str = malloc( length + 1 );
@@ -127,14 +135,6 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
         }
         else if (tk.type == TOKEN_MUL){
             int num = fac1*fac2;
-            int length = snprintf( NULL, 0, "%d", num );
-            char* str = malloc( length + 1 );
-            snprintf( str, length + 1, "%d", num );
-            Token newtk = {str, TOKEN_INT};
-            top = push(newtk, top);
-        }
-        else if (tk.type == TOKEN_DIV){
-            int num = fac1/fac2;
             int length = snprintf( NULL, 0, "%d", num );
             char* str = malloc( length + 1 );
             snprintf( str, length + 1, "%d", num );
@@ -201,11 +201,13 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
         }
         free(tk.value);
     }
+
     Token tk = (*top).tk;
     int res;
     if (tk.type == TOKEN_INT){
         res = atoi(tk.value);
     }
+    // If the input is just a variable.
     else {
         int index = search(varList, tk.value, *varCount);
         if (index==-1){

@@ -5,7 +5,8 @@
 #include "shunting.h"
 
 void validate(bool *error, Token *infixTokens, int tokenCount){
-    if (*error) return; //Invalid character. This is checked in lexer.
+    //Invalid character. This is checked in lexer.
+    if (*error) return; 
     for (int i = 0; i < tokenCount; i++)
     {
         Token currentToken = *(infixTokens+i);
@@ -51,7 +52,7 @@ void validate(bool *error, Token *infixTokens, int tokenCount){
             }
             else if (i!=0){
                 Token prev = *(infixTokens+i-1);
-                // Token before the function can be operator, comma or left paranthesis .
+                // Token before the function can be operator, comma or left paranthesis.
                 if (!isOperator(prev) && prev.type != TOKEN_COMMA && prev.type != TOKEN_LP){
                     *error=true;
                     return;

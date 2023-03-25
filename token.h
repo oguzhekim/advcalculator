@@ -3,9 +3,8 @@
 enum TokenType {
     TOKEN_INT,
     TOKEN_MUL,
-    TOKEN_DIV,
     TOKEN_ADD,
-    TOKEN_SUBS,
+    TOKEN_SUB,
     TOKEN_AND,
     TOKEN_OR,
     TOKEN_COMMENT,

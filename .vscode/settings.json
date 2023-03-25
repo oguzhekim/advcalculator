@@ -8,7 +8,8 @@
         "shunting2.h": "c",
         "token.h": "c",
         "limits.h": "c",
-        "shunting.h": "c"
+        "shunting.h": "c",
+        "variables.h": "c"
     },
     "cmake.configureOnOpen": true
 }
