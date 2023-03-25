@@ -1,0 +1,1 @@
+long long evaluate (int count, Token *postfix, char **varList, int *varCount, long long *valueList, bool *error);

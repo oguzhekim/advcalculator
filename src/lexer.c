@@ -61,7 +61,7 @@ Token* lexer(char* input, int* tokenCount, bool *error){
             char current = input[right];
             if (current==' '){
                 right++;
-                left = right;
+                left++;
                 continue;
             }
             else if (current=='%'){

@@ -16,13 +16,12 @@ int main(int argc, char const *argv[])
     
     char **varList = malloc(sizeof(char)*130);
     int varCount = 0;
-    int *valueList = malloc(sizeof(int)*130);
+    long long *valueList = malloc(sizeof(long long)*130);
     char line[257];
     printf("%% ./advcalc\n");
     printf("> ");
 
     while (fgets(line, sizeof(line), stdin)) {
-        // TODO: NO DIVISION
         if (line==NULL) break;
         bool error = false;
         int tokenCount = 0;
@@ -33,8 +32,8 @@ int main(int argc, char const *argv[])
         validate(&error, infixTokens, tokenCount);
         Token *postfixTokens = NULL;
         postfixTokens = shunting(infixTokens, tokenCount, &newTokenCount, &error);
-        int res = evaluate(newTokenCount, postfixTokens, varList, &varCount, valueList, &error);
-        if (res != INT_MIN) printf("%d\n", res);
+        long long res = evaluate(newTokenCount, postfixTokens, varList, &varCount, valueList, &error);
+        if (res != INT_MIN+1) printf("%lld\n", res);
         if (error) printf("Error!\n");
         free(postfixTokens);        
         free(infixTokens);        

@@ -11,5 +11,12 @@
         "shunting.h": "c",
         "variables.h": "c"
     },
-    "cmake.configureOnOpen": true
+    "cmake.configureOnOpen": true,
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/oguz/Documents/cmpe230_p1",
+            "binaryPath": "/home/oguz/Documents/cmpe230_p1/advcalc",
+            "binaryArgs": []
+        }
+    ]
 }

@@ -8,10 +8,10 @@
 #include "stack.h"
 #include "variables.h"
 
-int evaluate (int count, Token *postfix, char **varList, int *varCount, int *valueList, bool *error){
-    if (count==0) return INT_MIN;
+long long evaluate (int count, Token *postfix, char **varList, int *varCount, long long *valueList, bool *error){
+    if (count==0) return INT_MIN+1;
     // If there is an error issued before exit the function.
-    if (*error) return INT_MIN;
+    if (*error) return INT_MIN+1;
     stackNode* top = NULL;
     for (int i = 0; i < count; i++)
     {
@@ -19,7 +19,7 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
         // Unmatched left paranthesis. Postfix expression cannot contain paranthesis.
         if (tk.type == TOKEN_LP){
             *error = true;
-            return INT_MIN;
+            return INT_MIN+1;
         }
         // Push integers and variables to the stack.
         else if (tk.type == TOKEN_INT || tk.type == TOKEN_VARIABLE){
@@ -30,10 +30,10 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
         else if (tk.type == TOKEN_FUNC && strcmp(tk.value, "not")==0){
             free(tk.value);
             stackNode* node = pop(&top);
-            int fac;
+            long long fac;
             // If the popped token is variable get its value.
             if (node->tk.type == TOKEN_INT){
-                fac = atoi(node->tk.value);
+                fac = atoll(node->tk.value);
             }
             else {
                 int index = search(varList, node->tk.value, *varCount);
@@ -48,7 +48,7 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
             }
             free(node->tk.value);
             free(node);
-            int num = ~fac;
+            long long num = ~fac;
             int length = snprintf( NULL, 0, "%d", num );
             char* str = malloc( length + 1 );
             snprintf( str, length + 1, "%d", num );
@@ -59,7 +59,7 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
         else if (tk.type == TOKEN_EQUAL){
             free(tk.value);
             stackNode* node2 = pop(&top);
-            int fac = atoi(node2->tk.value);
+            long long fac = atoll(node2->tk.value);
             free(node2->tk.value);
             free(node2);
             stackNode* node1 = pop(&top);
@@ -76,7 +76,7 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
             else {
                 *(valueList+index) = fac;
             }
-            return INT_MIN;
+            return INT_MIN+1;
         }
         // For all other operations pop 2 elements from the stack and get their values if they are variables.
         stackNode* node2 = pop(&top);
@@ -85,10 +85,10 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
         Token tk1 = node1->tk;
         free(node2);
         free(node1);
-        int fac2;
-        int fac1;
+        long long fac2;
+        long long fac1;
         if (tk2.type == TOKEN_INT){
-            fac2 = atoi(tk2.value);
+            fac2 = atoll(tk2.value);
         }
         else {
             int index = search(varList, tk2.value, *varCount);
@@ -102,7 +102,7 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
             }
         }
         if (tk1.type == TOKEN_INT){
-            fac1 = atoi(tk1.value);
+            fac1 = atoll(tk1.value);
         }
         else {
             int index = search(varList, tk1.value, *varCount);
@@ -118,7 +118,7 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
         free(tk2.value);
         free(tk1.value);
         if (tk.type == TOKEN_ADD){            
-            int num = fac1+fac2;
+            long long num = fac1+fac2;
             int length = snprintf( NULL, 0, "%d", num );
             char* str = malloc( length + 1 );
             snprintf( str, length + 1, "%d", num );
@@ -126,7 +126,7 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
             top = push(newtk, top);
         }
         else if (tk.type == TOKEN_SUB){
-            int num = fac1-fac2;
+            long long num = fac1-fac2;
             int length = snprintf( NULL, 0, "%d", num );
             char* str = malloc( length + 1 );
             snprintf( str, length + 1, "%d", num );
@@ -134,7 +134,7 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
             top = push(newtk, top);
         }
         else if (tk.type == TOKEN_MUL){
-            int num = fac1*fac2;
+            long long num = fac1*fac2;
             int length = snprintf( NULL, 0, "%d", num );
             char* str = malloc( length + 1 );
             snprintf( str, length + 1, "%d", num );
@@ -142,7 +142,7 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
             top = push(newtk, top);
         }
         else if (tk.type == TOKEN_AND){
-            int num = fac1&fac2;
+            long long num = fac1&fac2;
             int length = snprintf( NULL, 0, "%d", num );
             char* str = malloc( length + 1 );
             snprintf( str, length + 1, "%d", num );
@@ -150,7 +150,7 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
             top = push(newtk, top);
         }
         else if (tk.type == TOKEN_OR){
-            int num = fac1|fac2;
+            long long num = fac1|fac2;
             int length = snprintf( NULL, 0, "%d", num );
             char* str = malloc( length + 1 );
             snprintf( str, length + 1, "%d", num );
@@ -159,7 +159,7 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
         }
         else if (tk.type == TOKEN_FUNC){  
             if (strcmp(tk.value, "xor")==0){
-                int num = fac1^fac2;
+                long long num = fac1^fac2;
                 int length = snprintf( NULL, 0, "%d", num );
                 char* str = malloc( length + 1 );
                 snprintf( str, length + 1, "%d", num );
@@ -167,7 +167,7 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
                 top = push(newtk, top);
             }
             else if (strcmp(tk.value, "ls")==0){
-                int num = fac1<<fac2;
+                long long num = fac1<<fac2;
                 int length = snprintf( NULL, 0, "%d", num );
                 char* str = malloc( length + 1 );
                 snprintf( str, length + 1, "%d", num );
@@ -175,7 +175,7 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
                 top = push(newtk, top);
             }
             else if (strcmp(tk.value, "rs")==0){
-                int num = fac1>>fac2;
+                long long num = fac1>>fac2;
                 int length = snprintf( NULL, 0, "%d", num );
                 char* str = malloc( length + 1 );
                 snprintf( str, length + 1, "%d", num );
@@ -183,7 +183,7 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
                 top = push(newtk, top);
             }
             else if (strcmp(tk.value, "lr")==0){
-                int num = (fac1 << fac2)|(fac1 >> (sizeof(int)*CHAR_BIT - fac2));
+                long long num = (fac1 << fac2 % (sizeof(long long)*CHAR_BIT))|(fac1 >> (sizeof(long long)*CHAR_BIT - fac2) % (sizeof(long long)*CHAR_BIT));
                 int length = snprintf( NULL, 0, "%d", num );
                 char* str = malloc( length + 1 );
                 snprintf( str, length + 1, "%d", num );
@@ -191,7 +191,7 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
                 top = push(newtk, top);
             }
             else if (strcmp(tk.value, "rr")==0){
-                int num = (fac1 >> fac2)|(fac1 << (sizeof(int)*CHAR_BIT - fac2));
+                long long num = (fac1 >> fac2 % (sizeof(long long)*CHAR_BIT))|(fac1 << (sizeof(long long)*CHAR_BIT - fac2) % (sizeof(long long)*CHAR_BIT));
                 int length = snprintf( NULL, 0, "%d", num );
                 char* str = malloc( length + 1 );
                 snprintf( str, length + 1, "%d", num );
@@ -203,9 +203,9 @@ int evaluate (int count, Token *postfix, char **varList, int *varCount, int *val
     }
 
     Token tk = (*top).tk;
-    int res;
+    long long res;
     if (tk.type == TOKEN_INT){
-        res = atoi(tk.value);
+        res = atoll(tk.value);
     }
     // If the input is just a variable.
     else {

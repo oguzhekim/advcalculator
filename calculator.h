@@ -1,1 +1,0 @@
-int evaluate (int count, Token *postfix, char **varList, int *varCount, int *valList, bool *error);
