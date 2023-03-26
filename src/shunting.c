@@ -51,7 +51,7 @@ Token* shunting(Token *infix, int tokenCount, int *newTokenCount, bool *error)
                 (*newTokenCount)++;
                 tk = pop(&top)->tk;
             }
-            // If function comes next in stack after left paranthesis, pop and output it.
+            // If function comes next in stack after left parenthesis, pop and output it.
             if (!isEmpty(top) && (*top).tk.type == TOKEN_FUNC) {
                 tk = pop(&top)->tk;
                 *(postfixTokens+(*newTokenCount)) = tk;

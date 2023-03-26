@@ -7,12 +7,12 @@
 #include "lexer.h"
 
 
-bool isLParanthesis(char ch){
+bool isLParenthesis(char ch){
     if (ch=='(') return true;
     return false;
 }
 
-bool isRParanthesis(char ch){
+bool isRParenthesis(char ch){
     if (ch==')') return true;
     return false;
 }
@@ -28,7 +28,7 @@ bool isFunction(char* ch){
 }
 
 bool isDelimiter(char ch){
-    if (isRParanthesis(ch) || isLParanthesis(ch) || isOp(ch)  || ch=='%'  || ch==' ' || ch=='\0' || ch==',') return true;
+    if (isRParenthesis(ch) || isLParenthesis(ch) || isOp(ch)  || ch=='%'  || ch==' ' || ch=='\0' || ch==',') return true;
     return false;
 }
 
@@ -103,10 +103,10 @@ Token* lexer(char* input, int* tokenCount, bool *error){
             else if (current == '%'){
                 tk.type = TOKEN_COMMENT;
             }
-            else if (isLParanthesis(current)){
+            else if (isLParenthesis(current)){
                 tk.type = TOKEN_LP;
             }
-            else if (isRParanthesis(current)){
+            else if (isRParenthesis(current)){
                 tk.type = TOKEN_RP;                
             }
             *(tokens + *tokenCount) = tk;

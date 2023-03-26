@@ -9,8 +9,8 @@ enum TokenType {
     TOKEN_OR,
     TOKEN_COMMENT,
     TOKEN_VARIABLE,
-    TOKEN_LP, // Left paranthesis
-    TOKEN_RP, // Right paranthesis
+    TOKEN_LP, // Left parenthesis
+    TOKEN_RP, // Right parenthesis
     TOKEN_FUNC,
     TOKEN_COMMA,
     TOKEN_EQUAL
