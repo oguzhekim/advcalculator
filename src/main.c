@@ -25,13 +25,12 @@ int main(int argc, char const *argv[])
         if (line==NULL) break;
         bool error = false;
         int tokenCount = 0;
-        // Number of tokens in postfix expression. It might be different than the infix expression because it doesn't contain any paranthesis.
+        // Number of tokens in postfix expression. It might be different than the infix expression because it doesn't contain any parenthesis.
         int newTokenCount = 0; 
         line[strcspn(line, "\n")] = 0;
         Token *infixTokens = lexer(line, &tokenCount, &error);
         validate(&error, infixTokens, tokenCount);
-        Token *postfixTokens = NULL;
-        postfixTokens = shunting(infixTokens, tokenCount, &newTokenCount, &error);
+        Token *postfixTokens = shunting(infixTokens, tokenCount, &newTokenCount, &error);
         long long res = evaluate(newTokenCount, postfixTokens, varList, &varCount, valueList, &error);
         if (res != INT_MIN+1) printf("%lld\n", res);
         if (error) printf("Error!\n");
@@ -39,6 +38,7 @@ int main(int argc, char const *argv[])
         free(infixTokens);        
         printf("> ");
     }
+    
     printf("\n%%\n");
     free(varList);
     free(valueList);

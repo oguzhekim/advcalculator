@@ -16,7 +16,7 @@ long long evaluate (int count, Token *postfix, char **varList, int *varCount, lo
     for (int i = 0; i < count; i++)
     {
         Token tk = *(postfix+i);
-        // Unmatched left paranthesis. Postfix expression cannot contain paranthesis.
+        // Unmatched left parenthesis. Postfix expression cannot contain parenthesis.
         if (tk.type == TOKEN_LP){
             *error = true;
             return INT_MIN+1;
@@ -49,9 +49,9 @@ long long evaluate (int count, Token *postfix, char **varList, int *varCount, lo
             free(node->tk.value);
             free(node);
             long long num = ~fac;
-            int length = snprintf( NULL, 0, "%d", num );
+            int length = snprintf( NULL, 0, "%lld", num );
             char* str = malloc( length + 1 );
-            snprintf( str, length + 1, "%d", num );
+            snprintf( str, length + 1, "%lld", num );
             Token newtk = {str, TOKEN_INT};
             top = push(newtk, top);
             continue;
@@ -64,7 +64,6 @@ long long evaluate (int count, Token *postfix, char **varList, int *varCount, lo
             free(node2);
             stackNode* node1 = pop(&top);
             char* var = node1->tk.value;
-            //free(node1->tk.value);
             free(node1);
             int index = search(varList, var, *varCount);
             // If variable not defined before, add it to varList and update its value.
@@ -75,12 +74,21 @@ long long evaluate (int count, Token *postfix, char **varList, int *varCount, lo
             // If variable defined before update its value.
             else {
                 *(valueList+index) = fac;
-            }
+            }        
             return INT_MIN+1;
         }
         // For all other operations pop 2 elements from the stack and get their values if they are variables.
-        stackNode* node2 = pop(&top);
-        stackNode* node1 = pop(&top);
+        stackNode* node2;
+        stackNode* node1;
+        // If there are not 2 elements in the stack. Give an error.
+        if (!isEmpty(top) && top->next != NULL){
+            node2 = pop(&top);
+            node1 = pop(&top);
+        }
+        else{
+            *error = true;
+            return INT_MIN+1;
+        }
         Token tk2 = node2->tk;
         Token tk1 = node1->tk;
         free(node2);
@@ -119,82 +127,82 @@ long long evaluate (int count, Token *postfix, char **varList, int *varCount, lo
         free(tk1.value);
         if (tk.type == TOKEN_ADD){            
             long long num = fac1+fac2;
-            int length = snprintf( NULL, 0, "%d", num );
+            int length = snprintf( NULL, 0, "%lld", num );
             char* str = malloc( length + 1 );
-            snprintf( str, length + 1, "%d", num );
+            snprintf( str, length + 1, "%lld", num );
             Token newtk = {str, TOKEN_INT};
             top = push(newtk, top);
         }
         else if (tk.type == TOKEN_SUB){
             long long num = fac1-fac2;
-            int length = snprintf( NULL, 0, "%d", num );
+            int length = snprintf( NULL, 0, "%lld", num );
             char* str = malloc( length + 1 );
-            snprintf( str, length + 1, "%d", num );
+            snprintf( str, length + 1, "%lld", num );
             Token newtk = {str, TOKEN_INT};    
             top = push(newtk, top);
         }
         else if (tk.type == TOKEN_MUL){
             long long num = fac1*fac2;
-            int length = snprintf( NULL, 0, "%d", num );
+            int length = snprintf( NULL, 0, "%lld", num );
             char* str = malloc( length + 1 );
-            snprintf( str, length + 1, "%d", num );
+            snprintf( str, length + 1, "%lld", num );
             Token newtk = {str, TOKEN_INT};
             top = push(newtk, top);
         }
         else if (tk.type == TOKEN_AND){
             long long num = fac1&fac2;
-            int length = snprintf( NULL, 0, "%d", num );
+            int length = snprintf( NULL, 0, "%lld", num );
             char* str = malloc( length + 1 );
-            snprintf( str, length + 1, "%d", num );
+            snprintf( str, length + 1, "%lld", num );
             Token newtk = {str, TOKEN_INT};
             top = push(newtk, top);
         }
         else if (tk.type == TOKEN_OR){
             long long num = fac1|fac2;
-            int length = snprintf( NULL, 0, "%d", num );
+            int length = snprintf( NULL, 0, "%lld", num );
             char* str = malloc( length + 1 );
-            snprintf( str, length + 1, "%d", num );
+            snprintf( str, length + 1, "%lld", num );
             Token newtk = {str, TOKEN_INT};
             top = push(newtk, top);
         }
         else if (tk.type == TOKEN_FUNC){  
             if (strcmp(tk.value, "xor")==0){
                 long long num = fac1^fac2;
-                int length = snprintf( NULL, 0, "%d", num );
+                int length = snprintf( NULL, 0, "%lld", num );
                 char* str = malloc( length + 1 );
-                snprintf( str, length + 1, "%d", num );
+                snprintf( str, length + 1, "%lld", num );
                 Token newtk = {str, TOKEN_INT};
                 top = push(newtk, top);
             }
             else if (strcmp(tk.value, "ls")==0){
                 long long num = fac1<<fac2;
-                int length = snprintf( NULL, 0, "%d", num );
+                int length = snprintf( NULL, 0, "%lld", num );
                 char* str = malloc( length + 1 );
-                snprintf( str, length + 1, "%d", num );
+                snprintf( str, length + 1, "%lld", num );
                 Token newtk = {str, TOKEN_INT};
                 top = push(newtk, top);
             }
             else if (strcmp(tk.value, "rs")==0){
                 long long num = fac1>>fac2;
-                int length = snprintf( NULL, 0, "%d", num );
+                int length = snprintf( NULL, 0, "%lld", num );
                 char* str = malloc( length + 1 );
-                snprintf( str, length + 1, "%d", num );
+                snprintf( str, length + 1, "%lld", num );
                 Token newtk = {str, TOKEN_INT};
                 top = push(newtk, top);
             }
             else if (strcmp(tk.value, "lr")==0){
                 long long num = (fac1 << fac2 % (sizeof(long long)*CHAR_BIT))|(fac1 >> (sizeof(long long)*CHAR_BIT - fac2) % (sizeof(long long)*CHAR_BIT));
-                int length = snprintf( NULL, 0, "%d", num );
+                int length = snprintf( NULL, 0, "%lld", num );
                 char* str = malloc( length + 1 );
-                snprintf( str, length + 1, "%d", num );
+                snprintf( str, length + 1, "%lld", num );
                 Token newtk = {str, TOKEN_INT};
                 top = push(newtk, top);
             }
             else if (strcmp(tk.value, "rr")==0){
                 long long num = (fac1 >> fac2 % (sizeof(long long)*CHAR_BIT))|(fac1 << (sizeof(long long)*CHAR_BIT - fac2) % (sizeof(long long)*CHAR_BIT));
-                int length = snprintf( NULL, 0, "%d", num );
+                int length = snprintf( NULL, 0, "%lld", num );
                 char* str = malloc( length + 1 );
-                snprintf( str, length + 1, "%d", num );
+                snprintf( str, length + 1, "%lld", num );
                 Token newtk = {str, TOKEN_INT};
                 top = push(newtk, top);
             }
