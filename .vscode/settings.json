@@ -17,6 +17,11 @@
             "cwd": "/home/oguz/Documents/cmpe230_p1",
             "binaryPath": "/home/oguz/Documents/cmpe230_p1/advcalc",
             "binaryArgs": []
+        },
+        {
+            "cwd": "/home/oguz/Documents/advcalculator",
+            "binaryPath": "/home/oguz/Documents/advcalculator/advcalc",
+            "binaryArgs": []
         }
     ]
 }

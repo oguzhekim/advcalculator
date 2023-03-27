@@ -5,6 +5,49 @@
 #include "token.h"
 #include "shunting.h"
 
+int validateFunctions(Token currentToken, int tokenCount, int i, Token *infixTokens, bool *error){
+    if (strcmp(currentToken.value, "not")==0){
+        int parenthesisCount = 0;
+        // Starting from the left parenthesis after the not function, traverse until parenthesis are matched. If any comma is detected, give an error.
+        // There can be nested functions and parentheses. There should be error only when left parentheses count is 1 more than right, and comma is encountered.
+        int newIndex=-1;
+        for (int j = i+1; j < tokenCount; j++)
+        {   
+            if ((infixTokens+j)->type == TOKEN_FUNC){
+                newIndex = validateFunctions(*(infixTokens+j), tokenCount, j, infixTokens, error);
+            }
+            if (j<=newIndex) continue;
+            if ((infixTokens+j)->type == TOKEN_LP) parenthesisCount++;
+            else if ((infixTokens+j)->type == TOKEN_RP) parenthesisCount--;            
+            if (parenthesisCount == 0) return j;
+            if ((infixTokens+j)->type == TOKEN_COMMA) {
+                *error = true;
+                return j;
+            }
+            if (*error) return j;
+        }
+    }
+    else {
+        // For every other function there should be comma when the left parentheses count is 1 more than right.
+        int parenthesisCount = 0;
+        int newIndex=-1;           
+        for (int j = i+1; j < tokenCount; j++)
+        {
+            if ((infixTokens+j)->type == TOKEN_FUNC){
+                newIndex = validateFunctions(*(infixTokens+j), tokenCount, j, infixTokens, error);
+            }
+            if (j<=newIndex) continue;
+            if ((infixTokens+j)->type == TOKEN_LP) parenthesisCount++;
+            else if ((infixTokens+j)->type == TOKEN_RP) parenthesisCount--;
+            if (parenthesisCount == 0) return j;
+            if ((infixTokens+j)->type == TOKEN_COMMA && parenthesisCount != 1) {
+                *error = true;
+                break;
+            }
+        }
+    }
+}
+
 void validate(bool *error, Token *infixTokens, int tokenCount){
     //Invalid character. This is checked in lexer.
     if (*error) return; 
@@ -59,21 +102,40 @@ void validate(bool *error, Token *infixTokens, int tokenCount){
                     return;
                 }
             }
+            validateFunctions(currentToken, tokenCount, i, infixTokens, error);
+            if (*error) return;
+            /*
             // If token is the not function, it cannot contain comma between parenthesis.
             if (strcmp(currentToken.value, "not")==0){
                 int parenthesisCount = 0;
                 // Starting from the left parenthesis after the not function, traverse until parenthesis are matched. If any comma is detected, give an error.
+                // There can be nested functions and parentheses. There should be error only when left parentheses count is 1 more than right, and comma is encountered.
                 for (int j = i+1; j < tokenCount; j++)
                 {
                     if ((infixTokens+j)->type == TOKEN_LP) parenthesisCount++;
                     else if ((infixTokens+j)->type == TOKEN_RP) parenthesisCount--;
                     if (parenthesisCount == 0) break;
-                    if ((infixTokens+j)->type == TOKEN_COMMA) {
+                    if ((infixTokens+j)->type == TOKEN_COMMA && parenthesisCount == 1) {
                         *error=true;
                         return;
                     }
                 }
             }
+            else {
+                // For every other function there should be comma when the left parentheses count is 1 more than right.
+                int parenthesisCount = 0;                
+                for (int j = i+1; j < tokenCount; j++)
+                {
+                    if ((infixTokens+j)->type == TOKEN_LP) parenthesisCount++;
+                    else if ((infixTokens+j)->type == TOKEN_RP) parenthesisCount--;
+                    if (parenthesisCount == 0) break;
+                    if ((infixTokens+j)->type == TOKEN_COMMA && parenthesisCount != 1) {
+                        *error=true;
+                        return;
+                    }
+                }
+            }
+            */
         }
         else if (type == TOKEN_INT || type == TOKEN_VARIABLE){                        
             // Token after the integer or variable cannot be integer, variable, function or left parenthesis.
