@@ -36,33 +36,44 @@ Token* shunting(Token *infix, int tokenCount, int *newTokenCount, bool *error)
         // If the incoming token is a function or left parenthesis, push it to the stack.
         else if (currentToken.type == TOKEN_FUNC || currentToken.type == TOKEN_LP){
             top = push(currentToken, top);
-        } 
+        }
         // If the incoming token is a right parenthesis: discard the right parenthesis, pop and output the stack symbols until you see a left parenthesis. 
         // Pop the left parenthesis and discard it.
-        else if (currentToken.type == TOKEN_RP){            
+        else if (currentToken.type == TOKEN_RP){
+            free(currentToken.value);
             // If the stack is empty give an error (unmatched right parenthesis).
             if (isEmpty(top)){
                 *error = true;
                 return postfixTokens;
             }
-            Token tk = pop(&top)->tk;
+            stackNode* node = pop(&top);
+            Token tk = node->tk;
+            free(node);
             while (tk.type!=TOKEN_LP){
                 *(postfixTokens+(*newTokenCount)) = tk;
                 (*newTokenCount)++;
-                tk = pop(&top)->tk;
+                stackNode* node = pop(&top);
+                tk = node->tk;
+                free(node);
             }
+            free(tk.value);
             // If function comes next in stack after left parenthesis, pop and output it.
             if (!isEmpty(top) && (*top).tk.type == TOKEN_FUNC) {
-                tk = pop(&top)->tk;
+                stackNode* node = pop(&top);
+                tk = node->tk;
+                free(node);
                 *(postfixTokens+(*newTokenCount)) = tk;
                 (*newTokenCount)++;
             }
         }
         // If the incoming token is comma, pop until left parenthesis (excluding left parenthesis).
         else if (currentToken.type == TOKEN_COMMA){
+            free(currentToken.value);
             Token tk = (*top).tk;
             while (tk.type!=TOKEN_LP){            
-                tk = pop(&top)->tk;
+                stackNode* node = pop(&top);
+                tk = node->tk;
+                free(node);
                 *(postfixTokens+(*newTokenCount)) = tk;
                 (*newTokenCount)++;
                 tk = (*top).tk;
@@ -81,7 +92,9 @@ Token* shunting(Token *infix, int tokenCount, int *newTokenCount, bool *error)
         else if (isOperator(currentToken) && (getPrecedence(currentToken)<=getPrecedence((*top).tk))){
             int i = getPrecedence(currentToken);
             while (!isEmpty(top) && i<=getPrecedence((*top).tk)){
-                Token tk = pop(&top)->tk;
+                stackNode* node = pop(&top);
+                Token tk = node->tk;
+                free(node);
                 *(postfixTokens+(*newTokenCount)) = tk;
                 (*newTokenCount)++;
             }

@@ -100,9 +100,6 @@ Token* lexer(char* input, int* tokenCount, bool *error){
             else if (current == ','){
                 tk.type = TOKEN_COMMA;
             }
-            else if (current == '%'){
-                tk.type = TOKEN_COMMENT;
-            }
             else if (isLParenthesis(current)){
                 tk.type = TOKEN_LP;
             }
@@ -148,13 +145,14 @@ Token* lexer(char* input, int* tokenCount, bool *error){
                 tk.type = TOKEN_VARIABLE;
                 *(tokens + *tokenCount) = tk;
                 (*tokenCount)++;
-            }
+            }            
             // Invalid character.
             else {
+                free(substr);
                 *error = true;
                 break;
             }
-            free(substr);
+            free(substr);      
             // After the decision pointers can be set equal.
             left = right;
         }

@@ -18,15 +18,13 @@ int main(int argc, char const *argv[])
     int varCount = 0;
     long long *valueList = malloc(sizeof(long long)*130);
     char line[257];
-    printf("%% ./advcalc\n");
     printf("> ");
-
     while (fgets(line, sizeof(line), stdin)) {
-        if (line==NULL) break;
         bool error = false;
         int tokenCount = 0;
         // Number of tokens in postfix expression. It might be different than the infix expression because it doesn't contain any parenthesis.
         int newTokenCount = 0; 
+        // Ignore \n in the input.
         line[strcspn(line, "\n")] = 0;
         Token *infixTokens = lexer(line, &tokenCount, &error);
         validate(&error, infixTokens, tokenCount);
@@ -38,8 +36,6 @@ int main(int argc, char const *argv[])
         free(infixTokens);        
         printf("> ");
     }
-    
-    printf("\n%%\n");
     free(varList);
     free(valueList);
     return 0;

@@ -1,27 +1,18 @@
-advcalc: main.o lexer.o shunting.o validator.o variables.o stack.o calculator.o
-	gcc ./build/main.o ./build/lexer.o ./build/shunting.o ./build/validator.o ./build/variables.o ./build/stack.o ./build/calculator.o -o advcalc
+SOURCE=$(wildcard ./src/*.c)
+OBJECTS=$(patsubst ./src/%.c,./build/%.o,$(SOURCE))
+DEPFILES=$(patsubst ./build/%.o,./build/%.d,$(OBJECTS))
+INCDIR=-I "./include"
+FLAGS=-g $(INCDIR) -MP -MD
 
-main.o: ./src/main.c
-	gcc -I "./include" -g -c ./src/main.c -o ./build/main.o
+advcalc: $(OBJECTS)
+	gcc $(OBJECTS) -o advcalc
 
-lexer.o: ./src/lexer.c
-	gcc -I "./include" -g -c ./src/lexer.c -o ./build/lexer.o
-
-shunting.o: ./src/shunting.c
-	gcc -I "./include" -g -c ./src/shunting.c -o ./build/shunting.o
-
-validator.o: ./src/validator.c
-	gcc -I "./include" -g -c ./src/validator.c -o ./build/validator.o
-
-variables.o: ./src/variables.c
-	gcc -I "./include" -g -c ./src/variables.c -o ./build/variables.o
-
-stack.o: ./src/stack.c
-	gcc -I "./include" -g -c ./src/stack.c -o ./build/stack.o
-
-calculator.o: ./src/calculator.c
-	gcc -I "./include" -g -c ./src/calculator.c -o ./build/calculator.o
+./build/%.o: ./src/%.c
+	gcc $(FLAGS) -c $< -o $@
 
 clean:
-	rm  ./build/*.o advcalc
+	rm -f $(OBJECTS) $(DEPFILES) advcalc
 
+-include $(DEPFILES)
+
+.PHONY: clean
