@@ -6,17 +6,6 @@
 #include "token.h"
 #include "lexer.h"
 
-
-bool isLParenthesis(char ch){
-    if (ch=='(') return true;
-    return false;
-}
-
-bool isRParenthesis(char ch){
-    if (ch==')') return true;
-    return false;
-}
-
 bool isOp(char ch){
     if (ch=='+' || ch=='-' || ch=='*' || ch=='=' || ch=='&' || ch=='|') return true;
     return false;
@@ -28,7 +17,7 @@ bool isFunction(char* ch){
 }
 
 bool isDelimiter(char ch){
-    if (isRParenthesis(ch) || isLParenthesis(ch) || isOp(ch)  || ch=='%'  || ch==' ' || ch=='\0' || ch==',') return true;
+    if (ch=='(' || ch==')' || isOp(ch)  || ch=='%'  || ch==' ' || ch=='\0' || ch==',') return true;
     return false;
 }
 
@@ -100,10 +89,10 @@ Token* lexer(char* input, int* tokenCount, bool *error){
             else if (current == ','){
                 tk.type = TOKEN_COMMA;
             }
-            else if (isLParenthesis(current)){
+            else if (current == '('){
                 tk.type = TOKEN_LP;
             }
-            else if (isRParenthesis(current)){
+            else if (current == ')'){
                 tk.type = TOKEN_RP;                
             }
             *(tokens + *tokenCount) = tk;

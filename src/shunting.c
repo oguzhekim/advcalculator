@@ -16,7 +16,6 @@ int getPrecedence(Token tk){
     else if (type==TOKEN_AND || type==TOKEN_OR) return 1;
     else if (type==TOKEN_ADD || type==TOKEN_SUB) return 2;
     else if (type==TOKEN_MUL) return 3;
-    else if (type==TOKEN_FUNC) return 4;
     return -1;
 }
 

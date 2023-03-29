@@ -12,7 +12,7 @@ int validateFunctions(Token currentToken, int tokenCount, int i, Token *infixTok
     if (strcmp(currentToken.value, "not")==0){
         int parenthesisCount = 0; // Lparenthesis count - Rparenthesis count
         // Starting from the left parenthesis after the not function, traverse until parenthesis are matched. If any comma is detected, give an error.
-        // There can be nested functions that can contain comma. For these case, call this function recursively.
+        // There can be nested functions that can contain comma such as not(xor(2,3)). For these case, call this function recursively.
         int newIndex=-1;
         for (int j = i+1; j < tokenCount; j++)
         {   

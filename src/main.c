@@ -14,7 +14,7 @@
 int main(int argc, char const *argv[])
 {
     
-    char **varList = malloc(sizeof(char)*130);
+    char **varList = malloc(sizeof(char*)*130);
     int varCount = 0;
     long long *valueList = malloc(sizeof(long long)*130);
     char line[257];
@@ -22,7 +22,7 @@ int main(int argc, char const *argv[])
     while (fgets(line, sizeof(line), stdin)) {
         bool error = false;
         int tokenCount = 0;
-        // Number of tokens in postfix expression. It might be different than the infix expression because it doesn't contain any parenthesis.
+        // Number of tokens in postfix expression might be different than the infix expression because it doesn't contain any parenthesis.
         int newTokenCount = 0; 
         // Ignore \n in the input.
         line[strcspn(line, "\n")] = 0;

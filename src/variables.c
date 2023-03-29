@@ -4,7 +4,8 @@
 #include <stdbool.h>
 
 void addVar (char **varList, char *var, int *varCount){
-    *(varList+*varCount) = var;
+    *(varList+*varCount) = malloc(sizeof(char) * (strlen(var) + 1));
+    strcpy(*(varList+*varCount), var);
     (*varCount)++;
 }
 

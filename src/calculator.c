@@ -10,7 +10,7 @@
 
 long long evaluate (int count, Token *postfix, char **varList, int *varCount, long long *valueList, bool *error){
     if (count==0) return INT_MIN+1;
-    // If there is an error issued before exit the function.
+    // If there is an error issued before, exit the function.
     if (*error) return INT_MIN+1;
     stackNode* top = NULL;
     for (int i = 0; i < count; i++)
